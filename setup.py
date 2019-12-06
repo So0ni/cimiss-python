@@ -12,6 +12,7 @@ setup(
     version='0.1.2',
     description='A CIMISS client for python',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     license='GPL Licence',
     author='Sonic Young',
     author_email='173976914@qq.com',
