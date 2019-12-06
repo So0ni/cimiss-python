@@ -60,7 +60,7 @@ resp_array_2d = client.array_2d(
 # callAPI_to_gridArray2D
 # grid_array_2d(interface_id: str, params: Dict[str, str]) -> xr.DataArray
 resp_grid = client.grid_array_2d(
-    interface_id="	getNafpEleGridByTimeAndLevelAndValidtime",
+    interface_id="getNafpEleGridByTimeAndLevelAndValidtime",
     params={
         "dataCode": "NAFP_FOR_FTM_HIGH_EC_ANEA",
         "fcstEle": "TEM",
