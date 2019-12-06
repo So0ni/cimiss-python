@@ -2,10 +2,16 @@ import os
 from setuptools import setup, find_packages
 import glob
 
+ROOT = os.path.abspath(os.path.dirname(__file__))
+
+with open(os.path.join(ROOT, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
 setup(
     name='cimiss-python',
-    version='0.1.1',
+    version='0.1.2',
     description='A CIMISS client for python',
+    long_description=long_description,
     license='GPL Licence',
     author='Sonic Young',
     author_email='173976914@qq.com',
