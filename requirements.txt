@@ -1,5 +1,4 @@
 zeroc-ice
-logging-color
 xarray
 pandas
 urllib3

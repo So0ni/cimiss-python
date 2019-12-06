@@ -4,7 +4,7 @@ import glob
 
 setup(
     name='cimiss-python',
-    version='0.1.0',
+    version='0.1.1',
     description='A CIMISS client for python',
     license='GPL Licence',
     author='Sonic Young',
@@ -12,7 +12,7 @@ setup(
     url='https://github.com/So0ni/cimiss-python',
     packages=find_packages(exclude=('demo*',)),
     include_package_data=True,
-    install_requires=['logging-color>=0.1.0', 'zeroc-ice>=3.7.2', 'numpy>=1.16.4',
+    install_requires=['zeroc-ice>=3.7.2', 'numpy>=1.16.4',
                       'urllib3>=1.24.2', 'pandas>=0.25.1', 'xarray>=0.14.0'],
     data_files=[
         ('cimiss', [os.path.join('cimiss', 'stub.ice')]),

@@ -1,7 +1,6 @@
 # coding=utf8
 import os
 import logging
-import logging_color
 import socket
 import Ice
 # It's not wrong here
@@ -16,7 +15,6 @@ from typing import Optional
 from typing import Dict
 from typing import List
 
-logging_color.monkey_patch()
 
 logger = logging.getLogger('cimiss_python')
 
