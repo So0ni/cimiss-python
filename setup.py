@@ -9,7 +9,7 @@ with open(os.path.join(ROOT, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='cimiss-python',
-    version='0.1.2',
+    version='0.1.3',
     description='A CIMISS client for python',
     long_description=long_description,
     long_description_content_type='text/markdown',
