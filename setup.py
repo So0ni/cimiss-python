@@ -1,6 +1,6 @@
+#!/usr/bin/env python
 import os
 from setuptools import setup, find_packages
-import glob
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 
