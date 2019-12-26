@@ -20,7 +20,6 @@ pip install cimiss-python
 
 ### CentOS
 
-> 未经验证
 
 ```bash
 yum groupinstall "Development Tools"
@@ -83,3 +82,10 @@ resp_grid = client.grid_array_2d(
 # down_file(interface_id: str, params: Dict[str, str], file_dir: str) -> List[str]#
 
 ```
+
+## FAQ
+
+> A: `IcePy.cpython-36m-x86_64-linux-gnu.so: undefined symbol: SSLeay`
+
+Q: Update the system OpenSSL library version to 1.1.x
+
