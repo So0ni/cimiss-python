@@ -88,4 +88,3 @@ resp_grid = client.grid_array_2d(
 > A: `IcePy.cpython-36m-x86_64-linux-gnu.so: undefined symbol: SSLeay`
 
 Q: Update the system OpenSSL library version to 1.1.x
-
