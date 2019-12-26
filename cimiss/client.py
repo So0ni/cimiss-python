@@ -14,7 +14,7 @@ import urllib3
 from typing import Optional
 from typing import Dict
 from typing import List
-
+from typing import Union
 
 logger = logging.getLogger('cimiss_python')
 
@@ -68,7 +68,8 @@ class Query(Ice.Application):
     def __del__(self):
         self._ic.destroy()
 
-    def array_2d(self, interface_id: str, params: Dict[str, str]) -> pd.DataFrame:
+    def array_2d(self, interface_id: str, params: Dict[str, str],
+                 dtypes: Optional[Dict[Union[str, np.dtype]]] = None) -> pd.DataFrame:
 
         resp = self._api.callAPItoarray2D(self._user_id, self._pwd,
                                           interface_id, self._client_ip, self._language, self._version,
@@ -80,6 +81,8 @@ class Query(Ice.Application):
         data = resp.data
 
         df = pd.DataFrame(data, columns=elements)
+        if dtypes is not None:
+            df = df.astype(dtypes)
         return df
 
     def grid_array_2d(self, interface_id: str, params: Dict[str, str]) -> xr.DataArray:
