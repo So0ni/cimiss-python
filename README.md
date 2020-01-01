@@ -33,22 +33,24 @@ pip install cimiss-python
 
 ```python
 import cimiss
+import numpy as np
 
 # host 不带http前缀，通常为纯ip地址
 client = cimiss.Query(user_id='myuserid', password='mypasswd', host='myhost')
 
 
 # callAPI_to_array2D
-# array_2d(interface_id: str, params: Dict[str, str]) -> pd.DataFrame
+# array_2d(interface_id: str, params: Dict[str, str], dtypes: Optional[Dict[str, Union[str, np.dtype]]]) -> pd.DataFrame
 resp_array_2d = client.array_2d(
     interface_id="getSurfEleByTime",
     params={
         "dataCode": "SURF_CHN_MUL_HOR",
-        "elements": "Station_ID_C,PRE_1h,PRS,RHU,VIS,WIN_S_Avg_2mi,WIN_D_Avg_2mi,Q_PRS",
+        "elements": "Station_ID_C,PRE_1h,PRS",
         "times": "20181224000000",
         "orderby": "Station_ID_C:ASC",
         "limitCnt": "10",
     },
+    dtypes={'PRE_1h': np.float, 'PRS': np.float}
 )
 # pandas
 # https://pandas.pydata.org/pandas-docs/stable/

@@ -69,7 +69,7 @@ class Query(Ice.Application):
         self._ic.destroy()
 
     def array_2d(self, interface_id: str, params: Dict[str, str],
-                 dtypes: Optional[Dict[Union[str, np.dtype]]] = None) -> pd.DataFrame:
+                 dtypes: Optional[Dict[str, Union[str, np.dtype]]] = None) -> pd.DataFrame:
 
         resp = self._api.callAPItoarray2D(self._user_id, self._pwd,
                                           interface_id, self._client_ip, self._language, self._version,
