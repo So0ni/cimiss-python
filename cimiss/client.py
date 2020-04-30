@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np
 import urllib3
 from urllib.parse import urlparse
+from pathlib import Path
 # typing
 from typing import Optional
 from typing import Dict
@@ -68,7 +69,13 @@ class Query(Ice.Application):
         self._host = host
         self._port = port
 
-    def __del__(self):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.destroy()
+
+    def destroy(self):
         self._ic.destroy()
 
     def array_2d(self, interface_id: str, params: Dict[str, str],
@@ -101,25 +108,33 @@ class Query(Ice.Application):
         da = xr.DataArray(resp.data, coords=[('lat', lat), ('lon', lon)])
         return da
 
-    def save_file(self, interface_id: str,
-                  params: Dict[str, str],
-                  data_format: str,
-                  file_name: str,
-                  follow_host: Union[bool, str] = False
-                  ) -> str:
-        resp = self._api.callAPItosaveAsFile(self._user_id, self._pwd,
-                                             interface_id, self._client_ip, self._language, self._version,
-                                             params, data_format, os.path.basename(file_name))
-        if resp.request.errorCode != 0:
-            raise RequestError(resp.request.errorMessage)
-        logger.debug(resp.request.errorMessage)
-        url: str = resp.fileInfos[0].fileUrl
+    def _redir_host(self, url: str, follow_host: Union[bool, str]) -> str:
         if not url.startswith('http'):
             url = 'http://' + url
         if follow_host is True:
             url = urlparse(url)._replace(netloc=self._host).geturl()
         elif isinstance(follow_host, str):
             url = urlparse(url)._replace(netloc=follow_host).geturl()
+        return url
+
+    def save_file(self, interface_id: str,
+                  params: Dict[str, str],
+                  data_format: str,
+                  file_name: Union[str, Path],
+                  follow_host: Union[bool, str] = False
+                  ) -> str:
+        file_name = Path(file_name)
+        if file_name.is_dir():
+            raise IOError('[{}] is a directory'.format(str(file_name)))
+
+        resp = self._api.callAPItosaveAsFile(self._user_id, self._pwd,
+                                             interface_id, self._client_ip, self._language, self._version,
+                                             params, data_format, file_name.name)
+        if resp.request.errorCode != 0:
+            raise RequestError(resp.request.errorMessage)
+        logger.debug(resp.request.errorMessage)
+
+        url: str = self._redir_host(resp.fileInfos[0].fileUrl, follow_host)
         response = _http.request('GET', url)
         with open(file_name, 'wb') as f:
             f.write(response.data)
@@ -138,30 +153,27 @@ class Query(Ice.Application):
 
     def down_file(self, interface_id: str,
                   params: Dict[str, str],
-                  file_dir: str,
+                  file_dir: Union[str, Path],
                   follow_host: Union[bool, str] = False
                   ) -> List[str]:
-
+        file_dir = Path(file_dir)
         resp = self._api.callAPItofileList(self._user_id, self._pwd,
                                            interface_id, self._client_ip, self._language, self._version,
                                            params)
         if resp.request.errorCode != 0:
             raise RequestError(resp.request.errorMessage)
         logger.debug(resp.request.errorMessage)
+
+        if not file_dir.exists():
+            file_dir.mkdir()
+
         downloaded: List[str] = []
         for i, info in enumerate(resp.fileInfos):
             logger.info(f'downloading file {i + 1}/{len(resp.fileInfos)} ...')
 
-            url: str = info.fileUrl
-            if not url.startswith('http'):
-                url = 'http://' + url
-            if follow_host is True:
-                url = urlparse(url)._replace(netloc=self._host).geturl()
-            elif isinstance(follow_host, str):
-                url = urlparse(url)._replace(netloc=follow_host).geturl()
-
+            url: str = self._redir_host(info.fileUrl, follow_host)
             response = _http.request('GET', url)
-            with open(os.path.join(file_dir, info.fileName), 'wb') as f:
+            with open(file_dir / info.fileName, 'wb') as f:
                 f.write(response.data)
             downloaded.append(info.fileName)
         return downloaded
