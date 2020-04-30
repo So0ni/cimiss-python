@@ -54,7 +54,7 @@ resp_array_2d = client.array_2d(
 )
 # pandas
 # https://pandas.pydata.org/pandas-docs/stable/
-# dtypes参数字典value也可为字符穿 例如 {'PRE_1h': 'float', 'PRS': 'float32'}
+# dtypes参数字典value也可为字符串 例如 {'PRE_1h': 'float', 'PRS': 'float32'}
 
 
 # callAPI_to_gridArray2D
