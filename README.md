@@ -1,6 +1,8 @@
 # cimiss-python
  CIMISS client for Python 3
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6a61a8a78cb349cdad8f85ba0b2be846)](https://www.codacy.com/manual/So0ni/cimiss-python?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=So0ni/cimiss-python&amp;utm_campaign=Badge_Grade)
+
 ## Installation
 
 > Python >= 3.6
@@ -19,7 +21,6 @@ pip install cimiss-python
 ```
 
 ### CentOS
-
 
 ```bash
 sudo yum groupinstall "Development Tools"
