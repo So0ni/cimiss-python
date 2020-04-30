@@ -54,6 +54,7 @@ resp_array_2d = client.array_2d(
 )
 # pandas
 # https://pandas.pydata.org/pandas-docs/stable/
+# dtypes参数字典value也可为字符穿 例如 {'PRE_1h': 'float', 'PRS': 'float32'}
 
 
 # callAPI_to_gridArray2D
@@ -77,11 +78,14 @@ resp_grid = client.grid_array_2d(
 
 
 # callAPI_to_saveAsFile
-# save_file(interface_id: str, params: Dict[str, str], data_format: str, file_name: str) -> str
-
+# save_file(interface_id: str, params: Dict[str, str], data_format: str, file_name: str, follow_host: Union[bool, str] = False) -> str
+# follow_host可以为bool或str
+#   False时使用接口返回的默认下载主机
+#   True时则下载主机强行跟随host:80
+#   str时则为指定的主机 (x.x.x.x:x 形式 端口为80时可省略端口)
 
 # callAPI_to_downFile
-# down_file(interface_id: str, params: Dict[str, str], file_dir: str) -> List[str]#
+# down_file(interface_id: str, params: Dict[str, str], file_dir: str, follow_host: Union[bool, str] = False) -> List[str]#
 
 ```
 

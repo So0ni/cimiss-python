@@ -10,6 +10,7 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 import urllib3
+from urllib.parse import urlparse
 # typing
 from typing import Optional
 from typing import Dict
@@ -64,6 +65,8 @@ class Query(Ice.Application):
         self._version = "1.3"
         self._user_id = user_id
         self._pwd = password
+        self._host = host
+        self._port = port
 
     def __del__(self):
         self._ic.destroy()
@@ -98,14 +101,26 @@ class Query(Ice.Application):
         da = xr.DataArray(resp.data, coords=[('lat', lat), ('lon', lon)])
         return da
 
-    def save_file(self, interface_id: str, params: Dict[str, str], data_format: str, file_name: str) -> str:
+    def save_file(self, interface_id: str,
+                  params: Dict[str, str],
+                  data_format: str,
+                  file_name: str,
+                  follow_host: Union[bool, str] = False
+                  ) -> str:
         resp = self._api.callAPItosaveAsFile(self._user_id, self._pwd,
                                              interface_id, self._client_ip, self._language, self._version,
                                              params, data_format, os.path.basename(file_name))
         if resp.request.errorCode != 0:
             raise RequestError(resp.request.errorMessage)
         logger.debug(resp.request.errorMessage)
-        response = _http.request('GET', resp.fileInfos[0].fileUrl)
+        url: str = resp.fileInfos[0].fileUrl
+        if not url.startswith('http'):
+            url = 'http://' + url
+        if follow_host is True:
+            url = urlparse(url)._replace(netloc=self._host).geturl()
+        elif isinstance(follow_host, str):
+            url = urlparse(url)._replace(netloc=follow_host).geturl()
+        response = _http.request('GET', url)
         with open(file_name, 'wb') as f:
             f.write(response.data)
         return file_name
@@ -121,7 +136,11 @@ class Query(Ice.Application):
         df = pd.DataFrame.from_records(file_infos)
         return df
 
-    def down_file(self, interface_id: str, params: Dict[str, str], file_dir: str) -> List[str]:
+    def down_file(self, interface_id: str,
+                  params: Dict[str, str],
+                  file_dir: str,
+                  follow_host: Union[bool, str] = False
+                  ) -> List[str]:
 
         resp = self._api.callAPItofileList(self._user_id, self._pwd,
                                            interface_id, self._client_ip, self._language, self._version,
@@ -132,7 +151,16 @@ class Query(Ice.Application):
         downloaded: List[str] = []
         for i, info in enumerate(resp.fileInfos):
             logger.info(f'downloading file {i + 1}/{len(resp.fileInfos)} ...')
-            response = _http.request('GET', info.fileUrl)
+
+            url: str = info.fileUrl
+            if not url.startswith('http'):
+                url = 'http://' + url
+            if follow_host is True:
+                url = urlparse(url)._replace(netloc=self._host).geturl()
+            elif isinstance(follow_host, str):
+                url = urlparse(url)._replace(netloc=follow_host).geturl()
+
+            response = _http.request('GET', url)
             with open(os.path.join(file_dir, info.fileName), 'wb') as f:
                 f.write(response.data)
             downloaded.append(info.fileName)
