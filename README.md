@@ -17,6 +17,12 @@ pip install cimiss-python
 
 ### Windows
 
+> 如果使用Python==3.7.x 则可跳过1.2.直接使用pip安装
+ 
+1. 下载并安装 [.NET Framework 4.5.2](https://dotnet.microsoft.com/download/dotnet-framework/thank-you/net452-web-installer)
+
+2. 下载并安装 [Microsoft Visual C++ Build Tools 2015](http://go.microsoft.com/fwlink/?LinkId=691126)
+
 ```bash
 pip install cimiss-python
 ```
